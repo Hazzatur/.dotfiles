@@ -1,4 +1,0 @@
-#!/bin/bash
-
-brightnessctl s 5%+ && notify-send "Brightness - $(brightnessctl -d intel_backlight g | awk -F, '{print $1/96000*100}' | tr -d %)%"
-

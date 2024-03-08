@@ -1,10 +1,12 @@
 #! /usr/bin/bash
 
+# lesspipe.sh doesn't use eza, bat, or chafa; it uses ls and exiftool instead. So, we create a lessfilter.
+
 mime=$(file -bL --mime-type "$1")
 category=${mime%%/*}
 kind=${mime##*/}
 if [[ -d "$1" || -L "$1" && "$category" = inode/directory ]]; then
-	exa -1 --git --color=always --icons "$1"
+	eza -1 --git --color=always --icons "$1"
 elif [ "$category" = image ]; then
 	chafa "$1"
 	exiftool "$1"
@@ -20,5 +22,3 @@ elif [ "$category" = text ]; then
 else
 	lesspipe.sh "$1" | bat --color=always
 fi
-# lesspipe.sh don't use exa, bat and chafa, it use ls and exiftool. so we create a lessfilter.
-
