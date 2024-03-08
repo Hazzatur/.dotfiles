@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# Script to create an interactive menu
+# Use Up (↑, k, K) / Down (↓, j, J) to select an option
+# Use Enter to execute the selected option
+#
+# Floating window using i3wm
+# bindsym KEYBINDING exec --no-startup-id xfce4-terminal -e "PATH_TO_THIS_SCRIPT" -T "menu"
+# for_window [class="Xfce4-terminal" title="menu"] floating enable
+# for_window [class="Xfce4-terminal" title="menu"] resize set 300 300
+#
+# Usage
+# #!/bin/bash
+# source PATH_TO_THIS_SCRIPT/menu
+#
+# selected_item=0
+# menu_items=(
+#   'Item_1'
+#   'Item_2'
+#   'Exit'
+# )
+#
+# run_menu "$selected_item" "${menu_items[@]}"
+# menu_result="$?"
+#
+# case "$menu_result" in
+#   0)
+#     echo 'Item_1'
+#     ;;
+#   1)
+#     echo 'Item_2'
+#     ;;
+#   2)
+#     exit
+#     ;;
+# esac
+
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+function print_menu() {
+  local function_arguments=("$@")
+
+  local selected_item="$1"
+  local menu_items=("${function_arguments[@]:1}")
+  local menu_size="${#menu_items[@]}"
+
+  for ((i = 0; i < menu_size; ++i)); do
+    if [ "$i" = "$selected_item" ]; then
+      echo "• ${bold}${menu_items[i]}${normal}"
+    else
+      echo "  ${menu_items[i]}"
+    fi
+  done
+}
+
+function run_menu() {
+  local function_arguments=("$@")
+
+  local selected_item="$1"
+  local menu_items=("${function_arguments[@]:1}")
+  local menu_size="${#menu_items[@]}"
+  local menu_limit=$((menu_size - 1))
+  local input
+
+  clear
+  print_menu "$selected_item" "${menu_items[@]}"
+
+  while read -rsn1 input; do
+    case "$input" in
+    $'\x1B' | j | J | k | K)
+      if [ "$input" = "" ]; then
+        read -rsn1 -t 0.1 input
+        if [ "$input" = "[" ]; then
+          read -rsn1 -t 0.1 input
+        fi
+      fi
+      case "$input" in
+      A | k | K)
+        if [ "$selected_item" -ge 1 ]; then
+          selected_item=$((selected_item - 1))
+          clear
+          print_menu "$selected_item" "${menu_items[@]}"
+        fi
+        ;;
+      B | j | J)
+        if [ "$selected_item" -lt "$menu_limit" ]; then
+          selected_item=$((selected_item + 1))
+          clear
+          print_menu "$selected_item" "${menu_items[@]}"
+        fi
+        ;;
+      esac
+      read -rsn5 -t 0.1
+      ;;
+    "")
+      return "$selected_item"
+      ;;
+    esac
+  done
+}

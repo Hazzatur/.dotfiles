@@ -1,0 +1,77 @@
+#!/bin/bash
+source "$HOME/.scripts/menu_fzf"
+source "$HOME/.scripts/tmux_functions"
+
+function run_menu_projects() {
+  if [[ -z "$1" ]]; then
+    echo "No directories to choose from"
+    exit 1
+  fi
+
+  local -n base_dirs=$1
+  local option=${2:-"cd"}
+  local pane=${3:-}
+  local num_of_dirs=${#base_dirs[@]}
+
+  local editor="$HOME/.local/bin/lvim"
+  if [[ ! -f "$editor" ]]; then
+    editor="vim"
+  fi
+
+  # slash at the end of base_dir(s) is important to follow symlinks
+  if [[ "$num_of_dirs" -eq 1 ]]; then
+    base_dir="${base_dirs[0]}/"
+    menu_items_+=("$(find "${base_dirs[0]}"/ -mindepth 1 -maxdepth 1 \( -type d -o -type l \) -exec basename {} \;)")
+  else
+    # remove repeated dirs
+    IFS=" " read -r -a base_dirs <<< "$(tr ' ' '\n' <<< "${base_dirs[@]}" | sort -u | tr '\n' ' ')"
+    IFS=$'\n'
+    for base_dir in "${base_dirs[@]}"; do
+      menu_items_+=("$(find "$base_dir/" -mindepth 1 -maxdepth 1 \( -type d -o -type l \))")
+    done
+    unset IFS
+  fi
+
+  IFS=$'
+  ' menu_items=("$(sort <<<"${menu_items_[*]}")")
+  unset IFS
+  menu_items+=(
+    'Exit'
+  )
+
+  run_menu menu_result "${menu_items[@]}"
+  case $menu_result in
+    Exit | '')
+      exit 0
+      ;;
+  esac
+
+  if [[ "${menu_items[*]}" =~ "${menu_result}" ]]; then
+    if [[ "$num_of_dirs" -eq 1 ]]; then
+      name="$(echo "$menu_result" | tr . _)"
+      project_path="$base_dir/$menu_result"
+    else
+      name="$(basename "$menu_result" | tr . _)"
+      project_path="$menu_result"
+    fi
+    if [[ "$option" = "edit" ]]; then
+      cmd="cd $project_path && $editor $project_path"
+      run_cmd_in_new_session "$cmd" "$name"
+    elif [[ "$option" = "cd" ]]; then
+      if [[ -n "$pane" ]]; then
+        tmux respawnp -t "$pane" -k -c "$project_path"
+      else
+        tmux new-window -n "$name" -c "$project_path" 
+      fi
+    else
+      exit 1
+    fi
+  else
+    exit 1
+  fi
+}
+
+if declare -f "$1" > /dev/null
+then
+  "$@"
+fi

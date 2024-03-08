@@ -1,0 +1,35 @@
+[core]
+    editor = lvim
+    pager = delta --line-numbers --dark
+[delta]
+    side-by-side = true
+[credential]
+    helper = libsecret
+[alias]
+    all = "!f() { ls -R -d */.git | xargs -I{} bash -c \"echo {} && git -C {}/../ $1\"; }; f"
+    adog = log --all --decorate --oneline --graph --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+[user]
+    email = hazzatur@outlook.com
+    name = Hazzatur
+    signingKey = ""
+[gpg]
+    program = gpg
+[commit]
+    gpgSign = false
+[tag]
+    forceSignAnnotated = false
+[init]
+    defaultBranch = main
+[difftool]
+    prompt = true
+[diff]
+    tool = lvimdiff
+[difftool "lvimdiff"]
+    cmd = "lvim -d \"$LOCAL\" \"$REMOTE\""
+[filter "lfs"]
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+    clean = git-lfs clean -- %f
+[safe]
+    directory = /opt/flutter

@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Script to create an interactive menu with fzf
+# Use Up (↑, Ctrl + k) / Down (↓, Ctrl + j) to select an option
+# Use Enter to execute the selected option
+#
+# Floating window using i3wm
+# bindsym KEYBINDING exec --no-startup-id xfce4-terminal -e "PATH_TO_THIS_SCRIPT" -T "menu"
+# for_window [class="Xfce4-terminal" title="menu"] floating enable
+# for_window [class="Xfce4-terminal" title="menu"] resize set 300 300
+#
+# Usage
+# #!/bin/bash
+# source PATH_TO_THIS_SCRIPT/menu_fzf
+#
+# menu_items=(
+#   'Item_1'
+#   'Item_2'
+#   'Exit'
+# )
+#
+# run_menu menu_result "${menu_items[@]}"
+#
+# case "$menu_result" in
+#   Item_1)
+#     echo 'Item_1'
+#     ;;
+#   Item_2)
+#     echo 'Item_2'
+#     ;;
+#   Exit)
+#     exit 0
+#     ;;
+# esac
+
+function run_menu()
+{
+  local __resultvar=$1
+  local function_arguments=("$@")
+  local menu_items=$(printf '%s\n' "${function_arguments[@]:1}" | tac)
+
+  while read -r item; do
+    eval $__resultvar="'$item'"
+  done <<< $(echo "${menu_items[@]}" | fzf --print-query --height 100% --border --prompt="> " --color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4)
+}
+

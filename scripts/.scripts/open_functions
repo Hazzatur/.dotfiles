@@ -1,0 +1,40 @@
+#!/bin/bash
+source $HOME/.scripts/tmux_functions
+
+function open_website() {
+  local session="web"
+  local cmd="exo-open --launch WebBrowser '$1'"
+  open_in_tmux "$cmd" "$session"
+}
+
+function chrome_app() {
+  local session="chrome_app"
+  local cmd="google-chrome-stable --app='$1' --new-window"
+  open_in_tmux "$cmd" "$session"
+}
+
+function open_obsidian() {
+  local session="obsidian"
+  local cmd="obsidian 'obsidian://open?vault=$1'"
+  open_in_tmux "$cmd" "$session"
+}
+
+function open_scrcpy() {
+  local session="scrcpy"
+  local cmd="scrcpy &> /dev/null && exit"
+  devices=$(adb devices -l | tail -n +2 | awk '{print $1}')
+  if [ $(echo "$devices" | sed '/^\s*$/d' | wc -l) -gt 0 ]; then
+    if [ $(echo "$devices" | wc -l) -gt 1 ]; then
+      device=$(echo "$devices" | fzf)
+      cmd="scrcpy --serial $device &> /dev/null && exit"
+    fi
+    open_in_tmux "$cmd" "$session"
+  fi
+}
+
+function open_catfish() {
+  local session="catfish"
+  local cmd="catfish --path=~ --start '$1'"
+  open_in_tmux "$cmd" "$session"
+}
+

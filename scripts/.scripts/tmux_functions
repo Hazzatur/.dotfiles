@@ -1,0 +1,76 @@
+#!/bin/bash
+
+function kill_tmux_session() {
+  tmux kill-session -t "$1" 2>& 1 > /dev/null
+}
+
+function new_tmux_session() {
+  local session="$1"
+  if ! $(ps -e | grep -q tmux); then
+    tmux start \; new-session -d -s $session
+  elif ! tmux_has_session "$session"; then
+    tmux new-session -d -s "$session"
+  else
+    return 1
+  fi
+}
+
+# kill session if previous command run successfully
+function send_kill_tmux_session() {
+  local session="$1"
+  tmux send-keys -t "$session" "$(
+      if [ $? -eq 0 ]; then
+        echo "tmux kill-session -t $session 2>& 1 > /dev/null"
+      fi
+    )" C-m
+}
+
+function tmux_has_session() {
+  tmux has-session -t "$1" 2> /dev/null
+}
+
+function tmux_i3_focus() {
+  if [ $# -eq 1 ]; then
+    if i3-msg "$1 focus" &> /dev/null; then
+      return 0
+    fi
+  fi
+
+  tmux_has_session "$1"
+  if [ $? -eq 0 ]; then
+    if i3-msg "$2 focus" &> /dev/null; then
+      return 0
+    fi
+  fi
+   
+  return 1
+}
+
+function open_in_tmux(){
+  local cmd="$1"
+  local session="$2"
+  new_tmux_session "$session"
+  if [ $? -eq 1 ]; then
+    tmux split-window -t "$session": "$cmd"
+    return 0
+  fi
+  tmux send-keys -t $session: "$cmd" C-m
+  send_kill_tmux_session "$session"
+}
+
+# Run a command in a new tmux session and focus it
+# After the new session is closed, focus on the previous session
+# If the previous session does not exist, creates a new session
+function run_cmd_in_new_session () {
+  local cmd="$1"
+  local session="$2"
+  local prev_session=$(tmux display-message -p '#S')
+  local cmd+=" && tmux new-session -ds $prev_session || true && tmux switchc -t $prev_session && tmux kill-session -t $session || true && exit"
+  if ! $(ps -e | grep -q tmux); then
+    tmux start \; new-session -d -s $session "$cmd"
+  elif ! tmux_has_session "$session"; then
+    tmux new-session -d -s "$session" "$cmd"
+  fi
+  tmux switchc -t "$session"
+}
+

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+host=$(hostname)
+sink=$(pactl list short sinks | grep RUNNING | cut -f1)
+active_port=$(pactl list sinks | grep -E "Sink #$sink|Active" | tail -1 | cut -d ":" -f2 | xargs)
+
+if [[ "$host" = "RED" ]]; then
+  if [[ "$active_port" = "analog-output-headphones" ]]; then
+    pactl set-sink-port "$sink" analog-output-lineout
+  elif [[ "$active_port" = "analog-output-lineout" ]]; then
+    pactl set-sink-port "$sink" analog-output-headphones
+  else
+    echo "Unknown port: $active_port"
+  fi
+elif [[ "$host" = "REDL" ]]; then
+  if [[ "$active_port" = "[Out] Speaker" ]]; then
+    pactl set-sink-port "$sink" "[Out] Headphones" 
+  elif [[ "$active_port" = "[Out] Headphones" ]]; then
+    pactl set-sink-port "$sink" "[Out] Speaker" 
+  else
+    echo "Unknown port: $active_port"
+  fi
+fi
+
