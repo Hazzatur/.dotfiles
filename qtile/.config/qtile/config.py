@@ -6,7 +6,7 @@ from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 
 mod = "mod4"
-terminal = "alacritty"
+terminal = "wezterm"
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
 wallpaper_path = '~/.wallpaper/disperse01.jpg' if laptop else '~/.wallpaper/disperse02.jpg'
 wallpaper = os.path.expanduser(wallpaper_path)
@@ -63,9 +63,9 @@ keys = [
     Key([], "XF86AudioPrev", lazy.spawn("playerctl previous"), desc="Skip to previous"),
     # Apps
     Key([mod], "b", lazy.spawn("opera"), desc="Launch Opera"),
-    Key([mod], "e", lazy.spawn("spacefm"), desc="Launch SpaceFM"),
+    Key([mod], "e", lazy.spawn("thunar"), desc="Launch Thunar"),
     Key([], "Print", lazy.spawn("flameshot gui"), desc="Launch Flameshot"),
-    Key(["control", "mod1"], "Delete", lazy.spawn("alacritty -e btop"), desc="Launch Btop")
+    Key(["control", "mod1"], "Delete", lazy.spawn("wezterm -e btop"), desc="Launch Btop")
 ]
 
 groups = [Group(i) for i in "123456789"]
@@ -185,7 +185,7 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
 
 
 screen_configs = [
-    {'x': 1920, 'y': 1080, 'width': 1440, 'height': 900, 'main': True},  # DP-2
+    {'x': 1920, 'y': 1080, 'width': 1440, 'height': 900, 'main': True},  # DP-1
     {'x': 0, 'y': 180},  # HDMI-0
     {'x': 1920, 'y': 0},  # DP-3
     {'x': 3840, 'y': 100, 'width': 1080, 'height': 1920, 'wallpaper_mode': 'fill'}  # DP-4

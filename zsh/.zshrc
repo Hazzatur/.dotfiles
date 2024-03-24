@@ -236,10 +236,10 @@ fi
 # }}}
 
 # sudo {{{
-if [[ -x "$(command -v $HOME/.local/bin/lvim)" ]]; then
-  export SUDO_EDITOR='lvim'
-  export EDITOR='lvim'
-  export VISUAL='lvim'
+if [[ -x "$(command -v /usr/bin/nvim)" ]]; then
+  export SUDO_EDITOR='nvim'
+  export EDITOR='nvim'
+  export VISUAL='nvim'
 fi
 # }}}
 

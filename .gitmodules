@@ -1,9 +1,9 @@
 [submodule "personal"]
-	path = personal
-	url = git@github.com:Hazzatur/personal.git
+    path = personal
+    url = git@github.com:Hazzatur/personal.git
 [submodule "work"]
-	path = work
-	url = git@github.com:Hazzatur/work.git
+    path = work
+    url = git@github.com:Hazzatur/work.git
 [submodule "ranger/.config/ranger/plugins/ranger_devicons"]
-	path = ranger/.config/ranger/plugins/ranger_devicons
-	url = https://github.com/alexanderjeurissen/ranger_devicons
+    path = ranger/.config/ranger/plugins/ranger_devicons
+    url = https://github.com/alexanderjeurissen/ranger_devicons

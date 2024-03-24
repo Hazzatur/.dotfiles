@@ -1,5 +1,5 @@
 [core]
-    editor = lvim
+    editor = nvim
     pager = delta --line-numbers --dark
 [delta]
     side-by-side = true
@@ -23,9 +23,9 @@
 [difftool]
     prompt = true
 [diff]
-    tool = lvimdiff
-[difftool "lvimdiff"]
-    cmd = "lvim -d \"$LOCAL\" \"$REMOTE\""
+    tool = nvimdiff
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [filter "lfs"]
     smudge = git-lfs smudge -- %f
     process = git-lfs filter-process
