@@ -1,0 +1,140 @@
+{
+  "core": {
+    "pacman": [
+      "bat",
+      "blueman",
+      "broot",
+      "btop",
+      "catfish",
+      "chafa",
+      "clang",
+      "copyq",
+      "csvkit",
+      "docker",
+      "docker-compose",
+      "expect",
+      "eza",
+      "fd",
+      "filelight",
+      "flameshot",
+      "fzf",
+      "gimp",
+      "git-delta",
+      "gnome-keyring",
+      "gparted",
+      "jdk17-openjdk",
+      "kitty",
+      "kitty-shell-integration",
+      "kitty-terminfo",
+      "lesspipe",
+      "libsecret",
+      "lightdm",
+      "lightdm-slick-greeter",
+      "mdcat",
+      "navi",
+      "neovim",
+      "obs-studio",
+      "okular",
+      "perl-image-exiftool",
+      "picom",
+      "playerctl",
+      "polkit-gnome",
+      "postman-bin",
+      "python-kivy",
+      "python-pip",
+      "qbittorrent",
+      "qtile",
+      "ranger",
+      "ripgrep",
+      "rofi",
+      "rustup",
+      "scrcpy",
+      "seahorse",
+      "stow",
+      "thunar",
+      "thunderbird",
+      "tmux",
+      "tmuxp",
+      "v4l2loopback-dkms",
+      "vivaldi",
+      "vivaldi-ffmpeg-codecs",
+      "vlc",
+      "xclip",
+      "xcolor",
+      "xsv",
+      "zsh",
+      "zsh-autosuggestions",
+      "zsh-completions",
+      "zsh-syntax-highlighting"
+    ],
+    "yay": [
+      "birdtray",
+      "charles-bin",
+      "cht.sh-git",
+      "fzf-tab-git",
+      "gitkraken",
+      "google-chrome",
+      "jetbrains-toolbox",
+      "obs-backgroundremoval",
+      "oh-my-zsh-git",
+      "papirus-folders-catppuccin-git",
+      "ttf-meslo-nerd-font-powerlevel10k",
+      "volta-bin",
+      "zsh-theme-powerlevel10k"
+    ]
+  },
+  "extra": {
+    "pacman": [
+      "ansible",
+      "calibre",
+      "chromium",
+      "krita",
+      "lollypop",
+      "pdfarranger",
+      "xournalpp"
+    ],
+    "yay": [
+      "anaconda",
+      "flutter",
+      "megasync-bin",
+      "mugshot",
+      "ookla-speedtest-bin",
+      "thunar-megasync-bin",
+      "watchman-bin",
+      "windscribe-v2-bin"
+    ]
+  },
+  "games": {
+    "pacman": [
+      "discord",
+      "gamemode",
+      "lib32-gamemode",
+      "steam"
+    ],
+    "yay": [
+      "protontricks",
+      "protonup-qt"
+    ]
+  },
+  "qemu": {
+    "pacman": [
+      "bridge-utils",
+      "dnsmasq",
+      "iptables-nft ",
+      "libguestfs",
+      "nftables",
+      "openbsd-netcat",
+      "qemu-full",
+      "vde2",
+      "virt-manager",
+      "virt-viewer"
+    ]
+  },
+  "wps": {
+    "yay": [
+      "wps-office",
+      "wps-office-all-dicts-win-languages",
+      "wps-office-mime"
+    ]
+  }
+}

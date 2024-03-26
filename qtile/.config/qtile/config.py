@@ -6,7 +6,7 @@ from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 
 mod = "mod4"
-terminal = "wezterm"
+terminal = "kitty"
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
 wallpaper_path = '~/.wallpaper/disperse01.jpg' if laptop else '~/.wallpaper/disperse02.jpg'
 wallpaper = os.path.expanduser(wallpaper_path)
@@ -65,7 +65,7 @@ keys = [
     Key([mod], "b", lazy.spawn("opera"), desc="Launch Opera"),
     Key([mod], "e", lazy.spawn("thunar"), desc="Launch Thunar"),
     Key([], "Print", lazy.spawn("flameshot gui"), desc="Launch Flameshot"),
-    Key(["control", "mod1"], "Delete", lazy.spawn("wezterm -e btop"), desc="Launch Btop")
+    Key(["control", "mod1"], "Delete", lazy.spawn("kitty -e btop"), desc="Launch Btop")
 ]
 
 groups = [Group(i) for i in "123456789"]
