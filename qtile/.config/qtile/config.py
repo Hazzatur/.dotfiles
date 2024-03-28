@@ -62,7 +62,7 @@ keys = [
     Key([], "XF86AudioNext", lazy.spawn("playerctl next"), desc="Skip to next"),
     Key([], "XF86AudioPrev", lazy.spawn("playerctl previous"), desc="Skip to previous"),
     # Apps
-    Key([mod], "b", lazy.spawn("opera"), desc="Launch Opera"),
+    Key([mod], "b", lazy.spawn("vivaldi"), desc="Launch Vivaldi"),
     Key([mod], "e", lazy.spawn("thunar"), desc="Launch Thunar"),
     Key([], "Print", lazy.spawn("flameshot gui"), desc="Launch Flameshot"),
     Key(["control", "mod1"], "Delete", lazy.spawn("kitty -e btop"), desc="Launch Btop")

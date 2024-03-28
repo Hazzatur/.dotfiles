@@ -252,7 +252,7 @@ fi
 # }}}
 
 # browser {{{
-export BROWSER="/usr/bin/opera"
+export BROWSER="/usr/bin/vivaldi"
 # }}}
 
 # JetBrains scripts {{{
