@@ -39,8 +39,8 @@
       "picom",
       "playerctl",
       "polkit-gnome",
-      "postman-bin",
       "python-kivy",
+      "python-pillow",
       "python-pip",
       "qbittorrent",
       "qtile",
@@ -78,6 +78,7 @@
       "obs-backgroundremoval",
       "oh-my-zsh-git",
       "papirus-folders-catppuccin-git",
+      "postman-bin",
       "ttf-meslo-nerd-font-powerlevel10k",
       "volta-bin",
       "zsh-theme-powerlevel10k"
