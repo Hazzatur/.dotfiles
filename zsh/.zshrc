@@ -23,10 +23,6 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.pl
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
 
 plugins=(
-  git
-  docker
-  docker-compose
-  npm
   sudo
   dirhistory
 )
@@ -97,10 +93,6 @@ if [[ -d "$ANDROID_HOME" ]]; then
 fi
 # }}}
 
-# bat {{{ 
-export BAT_THEME="Dracula"
-# }}}
-
 # conda {{{
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -130,7 +122,10 @@ source /usr/share/fzf/key-bindings.zsh
 source /usr/share/fzf/completion.zsh
 export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4'
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
 
 # fzf-tab
 zstyle ':fzf-tab:*' fzf-pad 4
@@ -143,7 +138,7 @@ zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions' format '[%d]'
 # set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-# preview directory's content with exa when completing cd
+# preview directory's content with eza when completing cd
 zstyle ':fzf-tab:complete:(cd|-command-):*' fzf-preview 'less ${(Q)realpath}'
 # switch group using `,` and `.`
 zstyle ':fzf-tab:*' switch-group ',' '.'
@@ -236,10 +231,10 @@ fi
 # }}}
 
 # sudo {{{
-if [[ -x "$(command -v $HOME/.local/bin/lvim)" ]]; then
-  export SUDO_EDITOR='lvim'
-  export EDITOR='lvim'
-  export VISUAL='lvim'
+if [[ -x "$(command -v /usr/bin/nvim)" ]]; then
+  export SUDO_EDITOR='nvim'
+  export EDITOR='nvim'
+  export VISUAL='nvim'
 fi
 # }}}
 
@@ -257,7 +252,7 @@ fi
 # }}}
 
 # browser {{{
-export BROWSER="/usr/bin/opera"
+export BROWSER="/usr/bin/vivaldi"
 # }}}
 
 # JetBrains scripts {{{

@@ -8,7 +8,7 @@ Comment=Resource monitor that shows usage and stats for processor, memory, disks
 Comment[it]=Monitoraggio delle risorse: mostra utilizzo e statistiche per CPU, dischi, rete e processi
 Icon=btop
 Exec=kitty --title="btop" -e "btop"
-Terminal=true
+Terminal=false
 Categories=System;Monitor;ConsoleOnly;
 Keywords=system;process;task
 Path=

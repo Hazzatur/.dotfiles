@@ -103,15 +103,3 @@ function remove_lines_containing() {
     < "$1" grep -v "$2" > "$1"_remove_lines_containing
   fi
 }
-
-function ranger() {
-  if [[ $# -lt 1 ]]; then
-    kitty --title="ranger" zsh -c "ranger $pwd" &> /dev/null &!
-  fi
-
-  if [[ -f $1 ]]; then
-    kitty --title="ranger" zsh -c "ranger $(dirname $1)" &> /dev/null &!
-  elif [[ -d $1 ]]; then
-    kitty --title="ranger" zsh -c "ranger $1" &> /dev/null &!
-  fi
-}

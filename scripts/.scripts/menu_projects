@@ -13,9 +13,9 @@ function run_menu_projects() {
   local pane=${3:-}
   local num_of_dirs=${#base_dirs[@]}
 
-  local editor="$HOME/.local/bin/lvim"
+  local editor="/usr/bin/nvim"
   if [[ ! -f "$editor" ]]; then
-    editor="vim"
+    editor="vi"
   fi
 
   # slash at the end of base_dir(s) is important to follow symlinks

@@ -1,7 +1,9 @@
 {
   "meta": {
-    "name": "Custom theme", // Based on Dracula with some default & Catppuccin colors
-    "scheme": "dark" // must be "light" or "dark"
+    // Based on Dracula with some default & Catppuccin colors,
+    "name": "Custom theme",
+    // must be "light" or "dark",
+    "scheme": "dark"
   },
   "themeValues": {
     // values applied to the entire app
