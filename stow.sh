@@ -6,7 +6,25 @@ git submodule update --init
 
 # -----------------------------------------
 echo "Creating directories..."
-mkdir -p ~/.config/{btop,copyq/themes,dunst,gtk-3.0,flameshot,kitty,Kvantum,picom,qBittorrent/themes,qtile,qt5ct,qt6ct,rofi,Thunar,xournalpp/templates,yazi/themes}
+mkdir -p ~/.config/{\
+btop,\
+copyq/themes,\
+dunst,\
+gtk-3.0,\
+flameshot,\
+kitty,\
+Kvantum,\
+obs-studio/themes,\
+picom,\
+qBittorrent/themes,\
+qtile,\
+qt5ct,\
+qt6ct,\
+rofi,\
+Thunar,\
+xournalpp/templates,\
+yazi/themes\
+}
 mkdir -p ~/.gitkraken/themes
 mkdir -p ~/.local/share/applications
 mkdir -p ~/.screenlayout

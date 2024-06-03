@@ -4,3 +4,6 @@
 [submodule "work"]
     path = work
     url = git@github.com:Hazzatur/work.git
+[submodule "obs-studio"]
+    path = obs/.config/obs-studio/catppuccin
+    url = https://github.com/catppuccin/obs.git

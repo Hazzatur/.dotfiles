@@ -13,3 +13,7 @@ dbus-launch dunst --config "$HOME/.config/dunst/dunstrc" &
 if [[ "$host" = "REDL" ]]; then
   xautolock -time 10 -locker "$HOME/.config/qtile/scripts/lock.sh" -detectsleep &
 fi
+
+if command -v otd-daemon &> /dev/null; then
+  otd-daemon &
+fi
