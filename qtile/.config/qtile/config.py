@@ -58,7 +58,7 @@ def maximize_by_switching_layout(_qtile):
 mod = "mod4"
 terminal = "kitty"
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
-wallpaper_path = '~/.wallpaper/disperse01.jpg' if laptop else '~/.wallpaper/disperse02.jpg'
+wallpaper_path = '~/.wallpaper/disperse02.jpg' if laptop else '~/.wallpaper/disperse01.jpg'
 wallpaper = os.path.expanduser(wallpaper_path)
 
 keys = [
@@ -115,6 +115,11 @@ keys = [
     Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause"), desc="Play/Pause player"),
     Key([], "XF86AudioNext", lazy.spawn("playerctl next"), desc="Skip to next"),
     Key([], "XF86AudioPrev", lazy.spawn("playerctl previous"), desc="Skip to previous"),
+    # Brightness
+    Key([], "XF86MonBrightnessUp", lazy.spawn(os.path.expanduser('~/.config/qtile/scripts/brightness.sh up')),
+        desc="Increase brightness"),
+    Key([], "XF86MonBrightnessDown", lazy.spawn(os.path.expanduser('~/.config/qtile/scripts/brightness.sh down')),
+        desc="Decrease brightness"),
     # Apps
     Key([mod], "b", lazy.function(switch_or_run("vivaldi", "vivaldi-stable")), desc="Launch Vivaldi"),
     Key([mod], "e", lazy.function(switch_or_run("thunar", "thunar")), desc="Launch Thunar"),
