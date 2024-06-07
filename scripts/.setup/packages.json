@@ -3,8 +3,8 @@
     "pacman": [
       "bat",
       "blueman",
-      "broot",
       "brightnessctl",
+      "broot",
       "btop",
       "catfish",
       "chafa",
@@ -67,6 +67,7 @@
       "tmux",
       "tmuxp",
       "v4l2loopback-dkms",
+      "vim",
       "vivaldi",
       "vivaldi-ffmpeg-codecs",
       "vlc",
