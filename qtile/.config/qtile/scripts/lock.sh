@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pgrep -x i3lock && exit
+
 alpha='dd'
 background='#11111b'
 selection='#1e1e2e'

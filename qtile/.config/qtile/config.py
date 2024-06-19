@@ -19,6 +19,20 @@ def switch_or_run(app, wm_class):
     return __inner
 
 
+def move_to_screen_or_run(app, wm_class):
+    def __inner(_qtile):
+        for window in _qtile.windows_map.values():
+            if hasattr(window, "match") and window.match(Match(wm_class=wm_class)):
+                if window.floating:
+                    center_resize(window, window.width, window.height)
+                else:
+                    window.togroup(_qtile.current_group.name, switch_group=True)
+                return
+        _qtile.spawn(app)
+
+    return __inner
+
+
 def toggle_copyq():
     def __inner(_qtile):
         for window in _qtile.windows_map.values():
@@ -42,8 +56,8 @@ def floating_position(window):
     if hasattr(window, "match"):
         if window.match(Match(wm_class="copyq")):
             center_resize(window, 800, 600)
-        elif window.match(Match(wm_class="kitty", title="btop")):
-            center_resize(window, 1720, 880)
+        elif window.match(Match(wm_class="btop")):
+            center_resize(window, 1400, 800)
 
 
 @lazy.function
@@ -55,6 +69,14 @@ def maximize_by_switching_layout(_qtile):
         _qtile.layout = 'monadtall'
 
 
+def create_app_keys(_mod, _key, app, wm_class, description):
+    return [
+        Key([_mod], _key, lazy.function(switch_or_run(app, wm_class)), desc=f"Launch {description}"),
+        Key([_mod, "shift"], _key, lazy.function(move_to_screen_or_run(app, wm_class)),
+            desc=f"Move {description} to current screen"),
+    ]
+
+
 mod = "mod4"
 terminal = "kitty"
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
@@ -62,7 +84,11 @@ wallpaper_path = '~/.wallpaper/disperse02.jpg' if laptop else '~/.wallpaper/disp
 wallpaper = os.path.expanduser(wallpaper_path)
 
 keys = [
+    # Lock screen
     Key([mod], "escape", lazy.spawn(os.path.expanduser('~/.config/qtile/scripts/lock.sh')), desc="Lock screen"),
+    # Qtile controls
+    Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
+    Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -87,15 +113,13 @@ keys = [
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
     Key([mod, "shift"], "Return", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack", ),
-    Key([mod], "Return", lazy.function(switch_or_run(terminal, terminal)), desc="Launch terminal"),
-    # Toggle between different layouts as defined below
+    # Layout and window controls
     Key([mod, "shift"], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
     Key([mod], "f", lazy.function(maximize_by_switching_layout()), lazy.window.toggle_fullscreen(),
         desc="Toggle maximize"),
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
-    Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
-    Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
+    # Rofi
     Key([mod], "r", lazy.spawn("rofi -show drun -config ~/.config/rofi/rofidmenu.rasi"),
         desc="Application launcher"),
     Key([mod], "d", lazy.spawn("rofi -show run -config ~/.config/rofi/rofidmenu.rasi"),
@@ -120,35 +144,28 @@ keys = [
         desc="Increase brightness"),
     Key([], "XF86MonBrightnessDown", lazy.spawn(os.path.expanduser('~/.config/qtile/scripts/brightness.sh down')),
         desc="Decrease brightness"),
-    # Apps
-    Key([mod], "b", lazy.function(switch_or_run("vivaldi", "vivaldi-stable")), desc="Launch Vivaldi"),
-    Key([mod], "e", lazy.function(switch_or_run("thunar", "thunar")), desc="Launch Thunar"),
+    # Screenshots
     Key([], "Print", lazy.spawn("flameshot gui"), desc="Launch Flameshot"),
-    Key(["control", "mod1"], "Delete", lazy.spawn("kitty --title=btop -e btop"), desc="Launch Btop"),
-    Key([mod], "v", lazy.function(toggle_copyq()), desc="Toggle CopyQ")
+    # Clipboard
+    Key([mod], "v", lazy.function(toggle_copyq()), desc="Toggle CopyQ"),
+    # Apps
+    *create_app_keys(mod, "Return", terminal, terminal, "terminal"),
+    *create_app_keys(mod, "b", "vivaldi", "vivaldi-stable", "Vivaldi"),
+    *create_app_keys(mod, "e", "thunar", "thunar", "Thunar"),
+    Key(["control", "mod1"], "Delete",
+        lazy.function(move_to_screen_or_run("kitty --title=btop --class=btop -e btop", "btop")), desc="Launch Btop")
 ]
 
-groups = []
-group_names = ["1", "2", "3", "4", "5", "6", "7", "8"]
-group_labels = ["1", "2", "3", "4", "5", "6", "7", "8"]
-group_layouts = [
-    "monadtall",
-    "monadtall",
-    "monadtall",
-    "monadtall",
-    "monadtall",
-    "monadtall",
-    "monadtall",
-    "monadtall"
+groups = [
+    Group(name="1", layout="monadtall", label="1"),
+    Group(name="2", layout="monadtall", label="2"),
+    Group(name="3", layout="monadtall", label="3"),
+    Group(name="4", layout="monadtall", label="4"),
+    Group(name="5", layout="monadtall", label="5"),
+    Group(name="6", layout="monadtall", label="6"),
+    Group(name="7", layout="monadtall", label="7"),
+    Group(name="8", layout="monadtall", label="8"),
 ]
-
-for i in range(len(group_names)):
-    groups.append(
-        Group(
-            name=group_names[i],
-            layout=group_layouts[i].lower(),
-            label=group_labels[i]
-        ))
 
 for i in groups:
     keys.extend(
@@ -158,14 +175,14 @@ for i in groups:
                 [mod],
                 i.name,
                 lazy.group[i.name].toscreen(),
-                desc="Switch to group {}".format(i.name)
+                desc=f"Switch to group {i.name}"
             ),
             # mod1 + shift + letter of group = move focused window to group
             Key(
                 [mod, "shift"],
                 i.name,
                 lazy.window.togroup(i.name, switch_group=True),
-                desc="Move focused window to group {}".format(i.name)
+                desc=f"Move focused window to group {i.name}"
             )
         ]
     )
@@ -283,9 +300,9 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                 padding_x=1,
                 borderwidth=3,
                 active=colors.subtext1,
-                inactive=colors.surface1,
+                inactive=colors.overlay1,
                 rounded=False,
-                highlight_color=colors.surface1,
+                highlight_color=colors.surface0,
                 highlight_method="line",
                 this_current_screen_border=colors.blue,
                 this_screen_border=colors.sapphire,
@@ -315,7 +332,6 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                             border_width=[0, 0, 2, 0]
                         )
                     ]
-
                 )
             )
             widgets.append(widget.Systray(padding=3))
@@ -426,7 +442,7 @@ floating_layout = layout.Floating(
         Match(title="tastytrade - Portfolio Report"),  # tastytrade pop-out allocation
         Match(wm_class="tasty.javafx.launcher.LauncherFxApp"),  # tastytrade settings
         Match(wm_class="copyq"),  # copyq
-        Match(wm_class="kitty", title="btop")  # btop
+        Match(wm_class="btop")  # btop
     ]
 )
 auto_fullscreen = True

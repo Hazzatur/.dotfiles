@@ -7,6 +7,7 @@ git submodule update --init
 # -----------------------------------------
 echo "Creating directories..."
 mkdir -p ~/.config/{\
+broot,\
 btop,\
 copyq/themes,\
 dunst,\
