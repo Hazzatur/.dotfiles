@@ -60,13 +60,15 @@ def floating_position(window):
             center_resize(window, 1400, 800)
 
 
-@lazy.function
-def maximize_by_switching_layout(_qtile):
-    current_layout_name = _qtile.current_group.layout.name
-    if current_layout_name == 'monadtall':
-        _qtile.layout = 'max'
-    elif current_layout_name == 'max':
-        _qtile.layout = 'monadtall'
+def maximize_by_switching_layout():
+    def __inner(_qtile):
+        current_layout_name = _qtile.current_group.layout.name
+        if current_layout_name == 'monadtall':
+            _qtile.current_group.use_layout(1)
+        elif current_layout_name == 'max':
+            _qtile.current_group.use_layout(2)
+
+    return __inner
 
 
 def create_app_keys(_mod, _key, app, wm_class, description):
@@ -74,6 +76,7 @@ def create_app_keys(_mod, _key, app, wm_class, description):
         Key([_mod], _key, lazy.function(switch_or_run(app, wm_class)), desc=f"Launch {description}"),
         Key([_mod, "shift"], _key, lazy.function(move_to_screen_or_run(app, wm_class)),
             desc=f"Move {description} to current screen"),
+        Key([_mod, "control", "shift"], _key, lazy.spawn(app), desc=f"Launch new instance of {description}")
     ]
 
 
@@ -81,7 +84,7 @@ mod = "mod4"
 terminal = "kitty"
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
 wallpaper_path = '~/.wallpaper/disperse02.jpg' if laptop else '~/.wallpaper/disperse01.jpg'
-wallpaper = os.path.expanduser(wallpaper_path)
+_wallpaper = os.path.expanduser(wallpaper_path)
 
 keys = [
     # Lock screen
@@ -116,8 +119,7 @@ keys = [
     # Layout and window controls
     Key([mod, "shift"], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod], "f", lazy.function(maximize_by_switching_layout()), lazy.window.toggle_fullscreen(),
-        desc="Toggle maximize"),
+    Key([mod], "f", lazy.function(maximize_by_switching_layout()), desc="Toggle maximize"),
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     # Rofi
     Key([mod], "r", lazy.spawn("rofi -show drun -config ~/.config/rofi/rofidmenu.rasi"),
@@ -227,47 +229,32 @@ layout_theme = {
 }
 
 layouts = [
-    # layout.Bsp(**layout_theme),
     layout.Floating(**layout_theme),
-    # layout.RatioTile(**layout_theme),
-    # layout.VerticalTile(**layout_theme),
-    # layout.Matrix(**layout_theme),
+    layout.Max(**layout_theme),
     layout.MonadTall(**layout_theme),
-    # layout.MonadWide(**layout_theme),
-    layout.Tile(
-        shift_windows=True,
-        border_width=0,
-        margin=0,
-        ratio=0.335,
-    ),
-    layout.Max(
-        border_width=0,
-        margin=0,
+    layout.MonadWide(**layout_theme),
+    layout.TreeTab(
+        font="MesloLGS NF",
+        fontsize=12,
+        bg_color=colors.background,
+        active_bg=colors.sapphire,
+        active_fg=colors.surface1,
+        inactive_bg=colors.foreground,
+        inactive_fg=colors.background,
+        urgent_bg=colors.red,
+        urgent_fg=colors.background,
+        padding_x=0,
+        padding_y=8,
+        padding_left=0,
+        section_bottom=16,
+        section_top=16,
+        section_left=16,
+        section_fg=colors.pink,
+        section_fontsize=10,
+        vspace=3,
+        panel_width=240,
+        previous_on_rm=True
     )
-    # layout.Stack(**layout_theme, num_stacks=2),
-    # layout.Columns(**layout_theme),
-    # layout.TreeTab(
-    #     font = "Ubuntu Bold",
-    #     fontsize = 11,
-    #     border_width = 0,
-    #     bg_color = colors.background,
-    #     active_bg = colors.sapphire,
-    #     active_fg = colors.surface1,
-    #     inactive_bg = colors.foreground,
-    #     inactive_fg = colors.background,
-    #     padding_left = 8,
-    #     padding_x = 8,
-    #     padding_y = 6,
-    #     sections = ["ONE", "TWO", "THREE"],
-    #     section_fontsize = 10,
-    #     section_fg = colors.pink,
-    #     section_top = 15,
-    #     section_bottom = 15,
-    #     level_shift = 8,
-    #     vspace = 3,
-    #     panel_width = 240
-    #     ),
-    # layout.Zoomy(**layout_theme)
 ]
 
 widget_defaults = dict(
@@ -280,12 +267,12 @@ widget_defaults = dict(
 extension_defaults = widget_defaults.copy()
 
 
-def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode='stretch'):
+def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode='stretch', wallpaper=_wallpaper):
     def create_widgets():
         widgets = [
             widget.CurrentLayoutIcon(
                 foreground=colors.foreground,
-                padding=4,
+                padding=10,
                 scale=0.6
             ),
             widget.CurrentLayout(
@@ -334,6 +321,7 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                     ]
                 )
             )
+            widgets.append(widget.Spacer(length=8))
             widgets.append(widget.Systray(padding=3))
 
         widgets.append(widget.Spacer(length=8))
@@ -341,6 +329,7 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
             widget.Clock(
                 foreground=colors.teal,
                 format="⏱  %a %d-%m-%Y %I:%M %p",
+                padding=10,
                 decorations=[
                     BorderDecoration(
                         colour=colors.teal,
@@ -361,6 +350,7 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                 widget.QuickExit(
                     foreground=colors.red,
                     fmt='⏻: {}',
+                    padding=10,
                     decorations=[
                         BorderDecoration(
                             colour=colors.red,
@@ -375,6 +365,9 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
 
     top_bar = bar.Bar(
         widgets=create_widgets(),
+        border_color=colors.background,
+        border_width=5,
+        margin=[8, 8, 0, 8],
         size=26,
         opacity=1.0
     )
@@ -391,10 +384,12 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
 
 
 screen_configs = [
-    {'x': 0, 'y': 180},  # HDMI-0
-    {'x': 1920, 'y': 1080, 'width': 1440, 'height': 900, 'main': True},  # DP-1
-    {'x': 1920, 'y': 0},  # DP-3
-    {'x': 3840, 'y': 100, 'width': 1080, 'height': 1920, 'wallpaper_mode': 'fill'}  # DP-4
+    {'x': 0, 'y': 180, 'wallpaper': "~/Pictures/wallpaper/W2.png"},  # HDMI-0
+    {'x': 1920, 'y': 1080, 'width': 1440, 'height': 900, 'main': True, 'wallpaper': "~/Pictures/wallpaper/W3.png"},
+    # DP-1
+    {'x': 1920, 'y': 0, 'wallpaper': "~/Pictures/wallpaper/W1.png"},  # DP-3
+    {'x': 3840, 'y': 100, 'width': 1080, 'height': 1920, 'wallpaper_mode': 'fill',
+     'wallpaper': "~/Pictures/wallpaper/1.png"}  # DP-4
 ]
 
 if laptop:
