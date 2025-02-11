@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Deckboard
+Exec=/home/hazzatur/.local/bin/deckboard.appimage
+Terminal=false
+Type=Application
+Icon=/home/hazzatur/.local/share/applications/deckboard.png
+StartupWMClass=deckboard
+Comment=Phone as macro shortcut for your computer in easy way possible.
+MimeType=x-scheme-handler/com-rivafarabi-deckboard;
+Categories=Utility;
+Path=
+StartupNotify=false

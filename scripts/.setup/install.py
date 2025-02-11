@@ -82,6 +82,8 @@ def configure_system():
     elif os.uname().nodename == "REDL":
         wallpaper = f"{home_dir}/.wallpaper/disperse02.jpg"
 
+    subprocess.run([f"{home_dir}/.setup/deckboard.sh"], check=True)
+
     script_path = f"{home_dir}/.setup/configure_system.sh"
     subprocess.run(["bash", script_path, home_dir, wallpaper], check=True)
 

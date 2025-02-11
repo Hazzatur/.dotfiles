@@ -25,3 +25,5 @@ alias rmf='rm -rf'
 alias pwds='printf "%q\n" "$(pwd)"'
 
 alias chx='chmod +x'
+
+alias xo='xdg-open'

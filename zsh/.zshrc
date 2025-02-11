@@ -10,17 +10,26 @@ export POWERLEVEL9K_PROMPT_CHAR_OVERWRITE_STATE=false
 # }}}
 
 # oh-my-zsh {{{
-ZSH="/usr/share/oh-my-zsh/"
-
-zstyle ':omz:update' mode disabled
-
-source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+if [[ -n "$DISTROBOX_ENTER_PATH" ]]; then
+  ZSH="$HOME/.distrobox/omz/"
+else
+  ZSH="/usr/share/oh-my-zsh/"
+fi
 
 ZSH_CUSTOM=/home/hazzatur/.oh-my-zsh-custom
 
-source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.plugin.zsh
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
+zstyle ':omz:update' mode disabled
+
+if [[ -n "$DISTROBOX_ENTER_PATH" ]]; then
+  source "$HOME/.distrobox/p10k/powerlevel10k.zsh-theme"
+  source "$HOME/.distrobox/zsh-sh/zsh-syntax-highlighting.plugin.zsh"
+  source "$HOME/.distrobox/zsh-a/zsh-autosuggestions.plugin.zsh"
+else
+  source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+  source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.plugin.zsh
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
+  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
+fi
 
 plugins=(
   sudo
@@ -34,7 +43,12 @@ if [[ ! -d $ZSH_CACHE_DIR ]]; then
   mkdir $ZSH_CACHE_DIR
 fi
 
-source $ZSH/oh-my-zsh.sh
+if [[ -n "$DISTROBOX_ENTER_PATH" ]]; then
+  source "$HOME/.distrobox/omz/oh-my-zsh.sh"
+  return
+else
+  source $ZSH/oh-my-zsh.sh
+fi
 # }}}
 
 # bindings {{{
@@ -193,13 +207,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 function fzf-tab-tab() {
-    if [[ $#BUFFER == 0 ]]; then
-      BUFFER="cd "
-      CURSOR=$#BUFFER
-      fzf-tab-complete
-    else
-      fzf-tab-complete
-    fi
+  if [[ $#BUFFER == 0 ]]; then
+    BUFFER="cd "
+    CURSOR=$#BUFFER
+    fzf-tab-complete
+  else
+    fzf-tab-complete
+  fi
 }
 zle -N fzf-tab-tab
 bindkey '^I' fzf-tab-tab

@@ -118,3 +118,42 @@ function br {
     fi
 }
 
+function git_search_commit() {
+  if [[ $# -lt 2 ]]; then
+    echo "Usage: git_search_commit <commit-hash> <text-to-search> [--case-sensitive]"
+    return 1
+  fi
+
+  local commit="$1"
+  local search_text="$2"
+  local case_sensitive=false
+
+  # Check if optional case-sensitive flag is provided
+  if [[ "$3" == "--case-sensitive" ]]; then
+    case_sensitive=true
+  fi
+
+  # Retrieve the files changed in the commit and containing the search text
+  local files
+  if $case_sensitive; then
+    files=$(git grep "$search_text" -- $(git show --pretty=format: --name-only "$commit"))
+  else
+    files=$(git grep -i "$search_text" -- $(git show --pretty=format: --name-only "$commit"))
+  fi
+
+  if [[ -z "$files" ]]; then
+    echo "No matches found for '$search_text' in commit $commit."
+    return 0
+  fi
+
+  # Loop through the files and show the context
+  while IFS= read -r line; do
+    local file=$(echo "$line" | awk -F: '{print $1}')
+    echo -e "\033[1;33m\nIn file: $file\033[0m"  # Highlight "In file" in yellow
+    if $case_sensitive; then
+      git show "$commit:$file" | grep --color=always -C 2 "$search_text"
+    else
+      git show "$commit:$file" | grep --color=always -i -C 2 "$search_text"
+    fi
+  done <<< "$files"
+}
