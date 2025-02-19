@@ -1,6 +1,7 @@
 {
   "core": {
     "pacman": [
+      "arandr",
       "arj",
       "ark",
       "bat",
@@ -55,7 +56,7 @@
       "picom",
       "playerctl",
       "polkit-gnome",
-      "python-dbus-next",
+      "python-dbus-fast",
       "python-kivy",
       "python-pillow",
       "python-pip",
