@@ -83,6 +83,7 @@ def configure_system():
         wallpaper = f"{home_dir}/.wallpaper/disperse02.jpg"
 
     subprocess.run([f"{home_dir}/.setup/deckboard.sh"], check=True)
+    subprocess.run([f"{home_dir}/.setup/gk.sh"], check=True)
 
     script_path = f"{home_dir}/.setup/configure_system.sh"
     subprocess.run(["bash", script_path, home_dir, wallpaper], check=True)

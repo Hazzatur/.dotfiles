@@ -27,6 +27,7 @@ xournalpp/templates,\
 yazi/themes\
 }
 mkdir -p ~/.gitkraken/themes
+mkdir -p ~/.local/bin
 mkdir -p ~/.local/share/applications
 mkdir -p ~/.screenlayout
 mkdir -p ~/.scripts

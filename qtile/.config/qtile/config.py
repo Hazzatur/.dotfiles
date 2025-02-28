@@ -1,4 +1,6 @@
+import json
 import os
+import shlex
 import subprocess
 
 from libqtile import bar, layout, hook, qtile
@@ -7,6 +9,12 @@ from libqtile.lazy import lazy
 from qtile_extras import widget
 from qtile_extras.widget.decorations import BorderDecoration
 
+from custom.CatppuccinMocha import CatppuccinMocha
+
+
+# ------------------------------------------------------------
+# Functions
+# ------------------------------------------------------------
 
 def switch_or_run(app, wm_class):
     def __inner(_qtile):
@@ -51,13 +59,11 @@ def center_resize(window, width, height):
     window.center()
 
 
-@hook.subscribe.client_new
-def floating_position(window):
-    if hasattr(window, "match"):
-        if window.match(Match(wm_class="copyq")):
-            center_resize(window, 800, 600)
-        elif window.match(Match(wm_class="btop")):
-            center_resize(window, 1400, 800)
+def move_to_top_right(window, padding_x=15, padding_y=50):
+    screen = window.qtile.current_screen
+    x = screen.x + screen.width - window.width - padding_x
+    y = screen.y + padding_y
+    window.set_position_floating(x, y)
 
 
 def maximize_by_switching_layout():
@@ -90,12 +96,53 @@ def next_layout():
     return __inner
 
 
+def spawn_chord_info(chord: KeyChord):
+    def __inner(_qtile):
+        """
+        Extract the chord's name and its keys' descriptions from the KeyChord instance,
+        then spawn the PyQt5 info window passing the data as a JSON argument.
+        """
+        chord_name = chord.name if chord.name else "KeyChord Info"
+        key_entries = []
+        for cmd in chord.submappings:
+            key_desc = getattr(cmd, "desc", "")
+            if cmd.key == "Escape":
+                key_desc = "Cancel"
+            key_entries.append({"key": cmd.key, "desc": key_desc})
+        chord_info = {"name": chord_name, "keys": key_entries}
+        chord_info_json = json.dumps(chord_info)
+        safe_json = shlex.quote(chord_info_json)
+        chord_info_path = os.path.expanduser("~/.config/qtile/chord_info.py")
+        _qtile.spawn(f"python3 {chord_info_path} {safe_json}")
+
+    return __inner
+
+
+# ------------------------------------------------------------
+# Keybindings
+# ------------------------------------------------------------
+
 alt = "mod1"
 mod = "mod4"
 terminal = "kitty"
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
 wallpaper_path = '~/.wallpaper/disperse02.jpg' if laptop else '~/.wallpaper/disperse01.jpg'
 _wallpaper = os.path.expanduser(wallpaper_path)
+
+audio_key_chord = KeyChord(
+    [mod], "a", [
+        Key([], "t", lazy.spawn(os.path.expanduser('~/.config/qtile/scripts/toggle_audio.py')),
+            desc="Toggle Audio"),
+        Key([], "y", lazy.spawn("xdg-open https://music.youtube.com"),
+            desc="Open YT Music"),
+        Key([], "s", lazy.spawn("xdg-open https://open.spotify.com"),
+            desc="Open Spotify"),
+        Key([], "p", lazy.spawn("pavucontrol"),
+            desc="Open PulseAudio Volume Control")
+    ],
+    mode=False,
+    name="Audio Controls"
+)
 
 keys = [
     # Lock screen
@@ -138,16 +185,7 @@ keys = [
     Key([], "XF86AudioLowerVolume", lazy.spawn("amixer sset Master 5%-"), desc="Lower Volume by 5%"),
     Key([mod], "XF86AudioLowerVolume", lazy.spawn("amixer sset Master 1%-"), desc="Lower Volume by 1%"),
     Key([], "XF86AudioMute", lazy.spawn("amixer sset Master 1+ toggle"), desc="Mute/Unmute Volume"),
-    KeyChord([mod], "a", [
-        Key([], "t", lazy.spawn(os.path.expanduser('~/.config/qtile/scripts/toggle_audio.py')),
-            desc="Toggle Audio"),
-        Key([], "y", lazy.spawn("xdg-open https://music.youtube.com"),
-            desc="Open YT Music"),
-        Key([], "s", lazy.spawn("xdg-open https://open.spotify.com"),
-            desc="Open Spotify"),
-        Key([], "p", lazy.spawn("pavucontrol"),
-            desc="Open PulseAudio Volume Control")
-    ], mode=False, name="Audio Controls"),
+    audio_key_chord,
     # Multimedia
     Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause"), desc="Play/Pause player"),
     Key([], "XF86AudioNext", lazy.spawn("playerctl next"), desc="Skip to next"),
@@ -173,6 +211,10 @@ keys = [
     Key(["control", "mod1"], "Delete",
         lazy.function(move_to_screen_or_run("kitty --title=btop --class=btop -e btop", "btop")), desc="Launch Btop")
 ]
+
+# ------------------------------------------------------------
+# Groups
+# ------------------------------------------------------------
 
 groups = [
     Group(name="1", layout="columns", label="1"),
@@ -205,37 +247,15 @@ for i in groups:
         ]
     )
 
-
-class CatppuccinMocha:
-    background = "#1e1e2e"
-    foreground = "#cdd6f4"
-    rosewater = "#f5e0dc"
-    flamingo = "#f2cdcd"
-    pink = "#f5c2e7"
-    mauve = "#cba6f7"
-    red = "#f38ba8"
-    maroon = "#eba0ac"
-    peach = "#fab387"
-    yellow = "#f9e2af"
-    green = "#a6e3a1"
-    teal = "#94e2d5"
-    sky = "#89dceb"
-    sapphire = "#74c7ec"
-    blue = "#89b4fa"
-    lavender = "#b4befe"
-    subtext1 = "#bac2de"
-    subtext0 = "#a6adc8"
-    overlay2 = "#9399b2"
-    overlay1 = "#7f849c"
-    overlay0 = "#6c7086"
-    surface2 = "#585b70"
-    surface1 = "#45475a"
-    surface0 = "#313244"
-    mantle = "#181825"
-    crust = "#11111b"
-
+# ------------------------------------------------------------
+# Theme
+# ------------------------------------------------------------
 
 colors = CatppuccinMocha()
+
+# ------------------------------------------------------------
+# Layouts
+# ------------------------------------------------------------
 
 layout_theme = {
     "border_width": 2,
@@ -272,6 +292,10 @@ layouts = [
     )
 ]
 
+# ------------------------------------------------------------
+# Widgets
+# ------------------------------------------------------------
+
 widget_defaults = dict(
     font="MesloLGS NF",
     fontsize=12,
@@ -280,6 +304,14 @@ widget_defaults = dict(
 )
 
 extension_defaults = widget_defaults.copy()
+
+
+# ------------------------------------------------------------
+# Screens
+# ------------------------------------------------------------
+
+def add_spacer(widgets):
+    return widgets.append(widget.Spacer(length=8))
 
 
 def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode='stretch', wallpaper=_wallpaper):
@@ -313,13 +345,15 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
             ),
             widget.WindowName(
                 foreground=colors.subtext1,
-                max_chars=60
+                max_chars=60,
+                padding=5
             ),
             widget.Chord(
                 chords_colors={
                     "launch": ("#282A36", "#282A36")
                 },
-                name_transform=lambda name: name.upper()
+                name_transform=lambda name: name.upper(),
+                padding=10
             )
         ]
 
@@ -333,13 +367,14 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                             colour=colors.pink,
                             border_width=[0, 0, 2, 0]
                         )
-                    ]
+                    ],
+                    padding=10
                 )
             )
-            widgets.append(widget.Spacer(length=8))
-            widgets.append(widget.Systray(padding=3))
+            widgets.append(widget.Systray(padding=10))
 
-        widgets.append(widget.Spacer(length=8))
+        add_spacer(widgets)
+
         widgets.append(
             widget.Clock(
                 foreground=colors.teal,
@@ -353,12 +388,13 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                 ]
             )
         )
-        widgets.append(widget.Spacer(length=8))
+
+        add_spacer(widgets)
 
         if laptop:
             widgets.append(widget.BatteryIcon())
             widgets.append(widget.Battery(format="{char} {percent:2.0%}"))
-            widgets.append(widget.Spacer(length=8))
+            add_spacer(widgets)
 
         if main:
             widgets.append(
@@ -374,7 +410,7 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                     ]
                 )
             )
-            widgets.append(widget.Spacer(length=8))
+        add_spacer(widgets)
 
         return widgets
 
@@ -410,11 +446,19 @@ if laptop:
 else:
     screens = [create_screen(**config) for config in screen_configs]
 
+# ------------------------------------------------------------
+# Mouse
+# ------------------------------------------------------------
+
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
     Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
     Click([mod], "Button2", lazy.window.bring_to_front())
 ]
+
+# ------------------------------------------------------------
+# Settings
+# ------------------------------------------------------------
 
 dgroups_key_binder = None
 dgroups_app_rules = []  # type: list
@@ -451,6 +495,9 @@ floating_layout = layout.Floating(
         Match(wm_class="tasty.javafx.launcher.LauncherFxApp"),  # tastytrade settings
         Match(wm_class="copyq"),  # copyq
         Match(wm_class="btop")  # btop
+    ],
+    no_reposition_rules=[
+        Match(wm_class="chord_info"),  # KeyChord Info
     ]
 )
 auto_fullscreen = True
@@ -459,6 +506,35 @@ reconfigure_screens = True
 auto_minimize = True
 wl_input_rules = None
 wmname = "LG3D"
+
+key_chords = {chord.name: chord for chord in keys if isinstance(chord, KeyChord)}
+
+
+# ------------------------------------------------------------
+# Hooks
+# ------------------------------------------------------------
+
+@hook.subscribe.client_new
+def floating_position(window):
+    if hasattr(window, "match"):
+        if window.match(Match(wm_class="copyq")):
+            center_resize(window, 800, 600)
+        elif window.match(Match(wm_class="btop")):
+            center_resize(window, 1400, 800)
+        elif window.match(Match(wm_class="chord_info")):
+            move_to_top_right(window)
+
+
+@hook.subscribe.enter_chord
+def on_enter_chord(chord_name):
+    chord = key_chords.get(chord_name)
+    if chord:
+        spawn_chord_info(chord)(qtile)
+
+
+@hook.subscribe.leave_chord
+def on_leave_chord():
+    qtile.spawn("pkill -f chord_info.py")
 
 
 @hook.subscribe.startup_once

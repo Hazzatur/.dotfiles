@@ -22,3 +22,4 @@ sudo systemctl enable --now bluetooth.service
 rustup default stable
 volta install node@latest
 sudo systemctl enable --now lightdm.service
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'

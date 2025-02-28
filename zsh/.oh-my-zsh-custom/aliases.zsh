@@ -27,3 +27,5 @@ alias pwds='printf "%q\n" "$(pwd)"'
 alias chx='chmod +x'
 
 alias xo='xdg-open'
+
+alias qtile_log='tail -f ~/.local/share/qtile/qtile.log'

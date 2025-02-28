@@ -157,3 +157,31 @@ function git_search_commit() {
     fi
   done <<< "$files"
 }
+
+function git_search_commits() {
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: git_search_commits <text-to-search> [--case-sensitive]"
+    return 1
+  fi
+
+  local search_text="$1"
+  local case_sensitive=false
+
+  # Check for optional case-sensitive flag
+  if [[ "$2" == "--case-sensitive" ]]; then
+    case_sensitive=true
+  fi
+
+  if $case_sensitive; then
+    # Use git log with -G to search the commit diffs (case sensitive)
+    git log --all --pretty=format:"%h - %s" -G"$search_text"
+  else
+    # For case-insensitive search, loop over all commits and grep each diff.
+    echo "Searching commits for '$search_text' (case-insensitive)..."
+    for commit in $(git rev-list --all); do
+      if git show "$commit" | grep -qi "$search_text"; then
+        git log -1 --pretty=format:"%h - %s" "$commit"
+      fi
+    done
+  fi
+}
