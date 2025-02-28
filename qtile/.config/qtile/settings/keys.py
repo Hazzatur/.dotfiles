@@ -3,12 +3,12 @@ import os
 from libqtile.config import Key, KeyChord
 from libqtile.lazy import lazy
 
-from .functions import create_app_keys, maximize_by_switching_layout, move_to_screen_or_run, next_layout, toggle_copyq
+from .functions import create_app_keys, launch_terminal_app, maximize_by_switching_layout, next_layout, toggle_copyq, \
+    toggle_tree_tab_layout
 from .path import qtile_scripts_path
 
 alt = "mod1"
 mod = "mod4"
-terminal = "kitty"
 
 audio_key_chord = KeyChord(
     [mod], "a", [
@@ -52,6 +52,7 @@ keys = [
     Key([mod, "shift"], "Tab", lazy.function(next_layout()), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
     Key([mod], "f", lazy.function(maximize_by_switching_layout()), desc="Toggle maximize"),
+    Key([mod, "control"], "f", lazy.function(toggle_tree_tab_layout()), desc="Toggle maximize"),
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     # Rofi
     Key([mod], "r", lazy.spawn("rofi -show drun -config ~/.config/rofi/rofidmenu.rasi"),
@@ -86,11 +87,11 @@ keys = [
     # Clipboard
     Key([mod], "v", lazy.function(toggle_copyq()), desc="Toggle CopyQ"),
     # Apps
-    *create_app_keys(mod, "Return", terminal, terminal, "terminal"),
+    *create_app_keys(mod, "Return", "kitty", "kitty", "Kitty"),
     *create_app_keys(mod, "b", "vivaldi", "vivaldi-stable", "Vivaldi"),
     *create_app_keys(mod, "e", "thunar", "thunar", "Thunar"),
-    Key(["control", "mod1"], "Delete",
-        lazy.function(move_to_screen_or_run("kitty --title=btop --class=btop -e btop", "btop")), desc="Launch Btop")
+    *launch_terminal_app([mod, "control"], "e", "yazi", "yazi", "Yazi"),
+    *launch_terminal_app(["control", "mod1"], "Delete", "btop", "btop", "Btop")
 ]
 
 key_chords = {chord.name: chord for chord in keys if isinstance(chord, KeyChord)}

@@ -17,14 +17,14 @@ groups = [
 for i in groups:
     keys.extend(
         [
-            # mod1 + letter of group = switch to group
+            # mod + char of group = switch to group
             Key(
                 [mod],
                 i.name,
                 lazy.group[i.name].toscreen(),
                 desc=f"Switch to group {i.name}"
             ),
-            # mod1 + shift + letter of group = move focused window to group
+            # mod + shift + char of group = move focused window to group
             Key(
                 [mod, "shift"],
                 i.name,

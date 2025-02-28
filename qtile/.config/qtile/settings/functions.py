@@ -8,6 +8,7 @@ from libqtile.lazy import lazy
 
 from .path import qtile_scripts_path
 
+
 def switch_or_run(app, wm_class):
     def __inner(_qtile):
         for window in _qtile.windows_map.values():
@@ -65,16 +66,44 @@ def maximize_by_switching_layout():
             _qtile.current_group.use_layout(1)
         elif current_layout_name == 'max':
             _qtile.current_group.use_layout(2)
+        elif current_layout_name == 'treetab':
+            _qtile.current_group.use_layout(1)
 
     return __inner
 
 
-def create_app_keys(_mod, _key, app, wm_class, description):
+def toggle_tree_tab_layout():
+    def __inner(_qtile):
+        current_layout_name = _qtile.current_group.layout.name
+        if current_layout_name == 'columns':
+            _qtile.current_group.use_layout(3)
+        elif current_layout_name == 'max':
+            _qtile.current_group.use_layout(3)
+        elif current_layout_name == 'treetab':
+            _qtile.current_group.use_layout(2)
+
+    return __inner
+
+
+def create_app_keys(_mod: str, _key, app, wm_class, description):
     return [
         Key([_mod], _key, lazy.function(switch_or_run(app, wm_class)), desc=f"Launch {description}"),
         Key([_mod, "shift"], _key, lazy.function(move_to_screen_or_run(app, wm_class)),
             desc=f"Move {description} to current screen"),
         Key([_mod, "control", "shift"], _key, lazy.spawn(app), desc=f"Launch new instance of {description}")
+    ]
+
+
+def launch_terminal_app(_mod: list[str], _key, app, wm_class, description):
+    command = "kitty --title={} --class={} -e {}".format(description, wm_class, app)
+    base_mod = _mod if isinstance(_mod, list) else [_mod]
+    return [
+        Key(
+            base_mod,
+            _key,
+            lazy.function(move_to_screen_or_run(command, wm_class)),
+            desc="Launch {}".format(description)
+        )
     ]
 
 

@@ -18,7 +18,7 @@ layouts = [
     layout.Columns(**layout_theme),
     layout.TreeTab(
         font="MesloLGS NF",
-        fontsize=12,
+        fontsize=10,
         bg_color=colors.background,
         active_bg=colors.sapphire,
         active_fg=colors.surface1,
@@ -35,8 +35,9 @@ layouts = [
         section_fg=colors.pink,
         section_fontsize=10,
         vspace=3,
-        panel_width=240,
-        previous_on_rm=True
+        panel_width=200,
+        previous_on_rm=True,
+        margin_left=8
     )
 ]
 
