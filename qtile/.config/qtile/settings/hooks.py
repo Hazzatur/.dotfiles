@@ -4,7 +4,7 @@ import subprocess
 from libqtile import hook, qtile
 from libqtile.config import Match
 
-from .functions import center_resize, move_to_top_right, spawn_chord_info
+from .functions import center_resize, get_chord_popup_manager, move_to_top_right, spawn_chord_info
 from .keys import key_chords
 from .path import qtile_scripts_path
 
@@ -29,7 +29,7 @@ def on_enter_chord(chord_name):
 
 @hook.subscribe.leave_chord
 def on_leave_chord():
-    qtile.spawn("pkill -f chord_info.py")
+    get_chord_popup_manager(qtile).kill_popup()
 
 
 @hook.subscribe.startup_once

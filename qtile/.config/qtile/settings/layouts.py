@@ -70,8 +70,5 @@ floating_layout = layout.Floating(
         Match(wm_class="tasty.javafx.launcher.LauncherFxApp"),  # tastytrade settings
         Match(wm_class="copyq"),  # copyq
         Match(wm_class="btop")  # btop
-    ],
-    no_reposition_rules=[
-        Match(wm_class="chord_info"),  # KeyChord Info
     ]
 )

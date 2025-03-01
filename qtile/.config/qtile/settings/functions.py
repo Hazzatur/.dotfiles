@@ -1,12 +1,8 @@
-import json
-import os
-import shlex
-
 from libqtile import qtile
-from libqtile.config import Key, KeyChord, Match
+from libqtile.config import Key, Match
 from libqtile.lazy import lazy
 
-from .path import qtile_scripts_path
+from .ChordPopupManager import ChordPopupManager
 
 
 def switch_or_run(app, wm_class):
@@ -117,23 +113,21 @@ def next_layout():
     return __inner
 
 
-def spawn_chord_info(chord: KeyChord):
+def get_chord_popup_manager(_qtile):
+    if not hasattr(_qtile, "chord_popup_manager"):
+        _qtile.chord_popup_manager = ChordPopupManager(_qtile)
+    return _qtile.chord_popup_manager
+
+
+def spawn_chord_info(chord):
     def __inner(_qtile):
-        """
-        Extract the chord's name and its keys' descriptions from the KeyChord instance,
-        then spawn the PyQt5 info window passing the data as a JSON argument.
-        """
-        chord_name = chord.name if chord.name else "KeyChord Info"
-        key_entries = []
+        manager = get_chord_popup_manager(_qtile)
+        chord_info = {"name": chord.name if chord.name else "KeyChord Info", "keys": []}
         for cmd in chord.submappings:
             key_desc = getattr(cmd, "desc", "")
             if cmd.key == "Escape":
                 key_desc = "Cancel"
-            key_entries.append({"key": cmd.key, "desc": key_desc})
-        chord_info = {"name": chord_name, "keys": key_entries}
-        chord_info_json = json.dumps(chord_info)
-        safe_json = shlex.quote(chord_info_json)
-        chord_info_path = os.path.join(qtile_scripts_path, 'chord_info.py')
-        _qtile.spawn(f"python3 {chord_info_path} {safe_json}")
+            chord_info["keys"].append({"key": cmd.key, "desc": key_desc})
+        manager.show_chord_info(chord_info)
 
     return __inner
