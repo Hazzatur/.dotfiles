@@ -20,6 +20,8 @@ def floating_position(window):
             move_to_top_right(window)
         elif window.match(Match(wm_class="menu_personal") | Match(wm_class="menu_work")):
             center_resize(window, 800, 300)
+        elif window.match(Match(wm_class="nmtui")):
+            center_resize(window, 800, 600)
 
 
 @hook.subscribe.enter_chord

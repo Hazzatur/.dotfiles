@@ -74,10 +74,10 @@ keys = [
     Key([mod, alt], "Return", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack"),
     Key([mod], "n", lazy.layout.normalize()),
     # Layout and window controls
-    Key([mod, "shift"], "Tab", lazy.function(next_layout()), desc="Toggle between layouts"),
+    Key([mod, "shift"], "Tab", next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod], "f", lazy.function(maximize_by_switching_layout()), desc="Toggle maximize"),
-    Key([mod, "control"], "f", lazy.function(toggle_tree_tab_layout()), desc="Toggle tree tab layout"),
+    Key([mod], "f", maximize_by_switching_layout(), desc="Toggle maximize"),
+    Key([mod, "control"], "f", toggle_tree_tab_layout(), desc="Toggle tree tab layout"),
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     # Rofi
     Key([mod], "r", lazy.spawn("rofi -show drun -config ~/.config/rofi/rofidmenu.rasi"),
@@ -110,7 +110,7 @@ keys = [
     # Screenshots
     Key([], "Print", lazy.spawn("flameshot gui"), desc="Launch Flameshot"),
     # Clipboard
-    Key([mod], "v", lazy.function(toggle_copyq()), desc="Toggle CopyQ"),
+    Key([mod], "v", toggle_copyq(), desc="Toggle CopyQ"),
     # Apps
     *create_app_keys(mod, "Return", "kitty", "kitty", "Kitty"),
     *create_app_keys(mod, "b", "vivaldi", "vivaldi-stable", "Vivaldi"),

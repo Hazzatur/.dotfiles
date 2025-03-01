@@ -57,6 +57,7 @@
       "playerctl",
       "polkit-gnome",
       "python-dbus-fast",
+      "python-iwlib",
       "python-kivy",
       "python-pillow",
       "python-pip",

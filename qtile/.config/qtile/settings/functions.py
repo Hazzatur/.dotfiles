@@ -30,15 +30,13 @@ def move_to_screen_or_run(app, wm_class):
     return __inner
 
 
-def toggle_copyq():
-    def __inner(_qtile):
-        for window in _qtile.windows_map.values():
-            if hasattr(window, "match") and window.match(Match(wm_class="copyq")):
-                _qtile.spawn("copyq hide")
-                return
-        _qtile.spawn("copyq show")
-
-    return __inner
+@lazy.function
+def toggle_copyq(_qtile):
+    for window in _qtile.windows_map.values():
+        if hasattr(window, "match") and window.match(Match(wm_class="copyq")):
+            _qtile.spawn("copyq hide")
+            return
+    _qtile.spawn("copyq show")
 
 
 def center_resize(window, width, height):
@@ -55,30 +53,26 @@ def move_to_top_right(window, padding_x=15, padding_y=50):
     window.set_position_floating(x, y)
 
 
-def maximize_by_switching_layout():
-    def __inner(_qtile):
-        current_layout_name = _qtile.current_group.layout.name
-        if current_layout_name == 'columns':
-            _qtile.current_group.use_layout(0)
-        elif current_layout_name == 'max':
-            _qtile.current_group.use_layout(1)
-        elif current_layout_name == 'treetab':
-            _qtile.current_group.use_layout(0)
-
-    return __inner
+@lazy.function
+def maximize_by_switching_layout(_qtile):
+    current_layout_name = _qtile.current_group.layout.name
+    if current_layout_name == 'columns':
+        _qtile.current_group.use_layout(0)
+    elif current_layout_name == 'max':
+        _qtile.current_group.use_layout(1)
+    elif current_layout_name == 'treetab':
+        _qtile.current_group.use_layout(0)
 
 
-def toggle_tree_tab_layout():
-    def __inner(_qtile):
-        current_layout_name = _qtile.current_group.layout.name
-        if current_layout_name == 'columns':
-            _qtile.current_group.use_layout(2)
-        elif current_layout_name == 'max':
-            _qtile.current_group.use_layout(2)
-        elif current_layout_name == 'treetab':
-            _qtile.current_group.use_layout(1)
-
-    return __inner
+@lazy.function
+def toggle_tree_tab_layout(_qtile):
+    current_layout_name = _qtile.current_group.layout.name
+    if current_layout_name == 'columns':
+        _qtile.current_group.use_layout(2)
+    elif current_layout_name == 'max':
+        _qtile.current_group.use_layout(2)
+    elif current_layout_name == 'treetab':
+        _qtile.current_group.use_layout(1)
 
 
 def create_app_keys(_mod: str, _key, app, wm_class, description):
@@ -103,14 +97,12 @@ def launch_terminal_app(_mod: list[str], _key, app, wm_class, description):
     ]
 
 
-def next_layout():
-    def __inner(_qtile):
-        for _i in range(0, 3):
-            if _qtile.current_group.current_layout == _i:
-                _qtile.current_group.use_layout(_i + 1 if _i < 2 else 0)
-                break
-
-    return __inner
+@lazy.function
+def next_layout(_qtile):
+    for _i in range(0, 3):
+        if _qtile.current_group.current_layout == _i:
+            _qtile.current_group.use_layout(_i + 1 if _i < 2 else 0)
+            break
 
 
 def get_chord_popup_manager(_qtile):
@@ -131,3 +123,9 @@ def spawn_chord_info(chord):
         manager.show_chord_info(chord_info)
 
     return __inner
+
+
+@lazy.function
+def spawn_terminal_app(_qtile, app, wm_class, description):
+    command = "kitty --title='{}' --class={} -e {}".format(description, wm_class, app)
+    _qtile.spawn(command)

@@ -72,6 +72,7 @@ floating_layout = layout.Floating(
         Match(wm_class="copyq"),  # copyq
         Match(wm_class="btop"),  # btop
         Match(wm_class="menu_personal"),  # Personal Menu
-        Match(wm_class="menu_work")  # Work Menu
+        Match(wm_class="menu_work"),  # Work Menu
+        Match(wm_class="nmtui")  # Network Manager
     ]
 )

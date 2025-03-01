@@ -4,7 +4,9 @@ from libqtile import bar
 from libqtile.config import Screen
 from qtile_extras import widget
 from qtile_extras.widget.decorations import BorderDecoration
+from qtile_extras.widget.network import WiFiIcon
 
+from .functions import spawn_terminal_app
 from .theme import theme
 
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
@@ -75,6 +77,23 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                 )
             )
             widgets.append(widget.Systray(padding=10))
+            widgets.append(WiFiIcon(
+                mouse_callbacks={
+                    'Button3': spawn_terminal_app(
+                        app="nmtui",
+                        wm_class="nmtui",
+                        description="Network Manager"
+                    )
+                },
+                foreground=theme.peach,
+                decorations=[
+                    BorderDecoration(
+                        colour=theme.pink,
+                        border_width=[0, 0, 1, 0]
+                    )
+                ],
+                padding=6
+            ))
 
         add_spacer(widgets)
 
