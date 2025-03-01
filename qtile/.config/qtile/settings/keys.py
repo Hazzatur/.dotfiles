@@ -3,8 +3,8 @@ import os
 from libqtile.config import Key, KeyChord
 from libqtile.lazy import lazy
 
-from .functions import create_app_keys, launch_terminal_app, maximize_by_switching_layout, next_layout, toggle_copyq, \
-    toggle_tree_tab_layout
+from .functions import create_app_keys, launch_terminal_app, maximize_by_switching_layout, next_layout, \
+    toggle_copyq, toggle_tree_tab_layout
 from .path import qtile_scripts_path
 
 alt = "mod1"
@@ -25,11 +25,36 @@ audio_key_chord = KeyChord(
     name="Audio Controls"
 )
 
+power_menu_key_chord = KeyChord(
+    [mod, "shift"], "q", [
+        Key([], "l", lazy.spawn(os.path.join(qtile_scripts_path, 'lock.sh')),
+            desc="Lock screen"),
+        Key([], "o", lazy.spawn("poweroff"),
+            desc="Power off"),
+        Key([], "r", lazy.spawn("reboot"),
+            desc="Reboot")
+    ],
+    mode=False,
+    name="Power Menu"
+)
+
+menu_launcher = KeyChord(
+    [mod], "m", [
+        *launch_terminal_app([], "a", "/home/hazzatur/.scripts/menu_personal", "menu_personal", "Personal Menu"),
+        *launch_terminal_app([], "s", "/home/hazzatur/.scripts/menu_work", "menu_work", "Work Menu"),
+    ],
+    mode=False,
+    name="Menu"
+)
+
 keys = [
+    # Power menu
+    power_menu_key_chord,
     # Lock screen
     Key([mod], "escape", lazy.spawn(os.path.join(qtile_scripts_path, 'lock.sh')), desc="Lock screen"),
     # Qtile controls
-    Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
+    Key([mod, "control", alt], "r", lazy.restart(), desc="Restart Qtile"),
+    Key([mod, "control"], "r", lazy.reload_config(), desc="Reload config"),
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -52,7 +77,7 @@ keys = [
     Key([mod, "shift"], "Tab", lazy.function(next_layout()), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
     Key([mod], "f", lazy.function(maximize_by_switching_layout()), desc="Toggle maximize"),
-    Key([mod, "control"], "f", lazy.function(toggle_tree_tab_layout()), desc="Toggle maximize"),
+    Key([mod, "control"], "f", lazy.function(toggle_tree_tab_layout()), desc="Toggle tree tab layout"),
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     # Rofi
     Key([mod], "r", lazy.spawn("rofi -show drun -config ~/.config/rofi/rofidmenu.rasi"),
@@ -91,7 +116,8 @@ keys = [
     *create_app_keys(mod, "b", "vivaldi", "vivaldi-stable", "Vivaldi"),
     *create_app_keys(mod, "e", "thunar", "thunar", "Thunar"),
     *launch_terminal_app([mod, "control"], "e", "yazi", "yazi", "Yazi"),
-    *launch_terminal_app(["control", "mod1"], "Delete", "btop", "btop", "Btop")
+    *launch_terminal_app(["control", alt], "Delete", "btop", "btop", "Btop"),
+    menu_launcher
 ]
 
 key_chords = {chord.name: chord for chord in keys if isinstance(chord, KeyChord)}

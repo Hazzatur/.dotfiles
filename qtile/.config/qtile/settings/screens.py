@@ -5,7 +5,7 @@ from libqtile.config import Screen
 from qtile_extras import widget
 from qtile_extras.widget.decorations import BorderDecoration
 
-from .CatppuccinMocha import CatppuccinMocha
+from .theme import theme
 
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
 wallpaper_path = '~/.wallpaper/disperse02.jpg' if laptop else '~/.wallpaper/disperse01.jpg'
@@ -21,12 +21,12 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
     def create_widgets():
         widgets = [
             widget.CurrentLayoutIcon(
-                foreground=colors.foreground,
+                foreground=theme.foreground,
                 padding=10,
                 scale=0.6
             ),
             widget.CurrentLayout(
-                foreground=colors.foreground,
+                foreground=theme.foreground,
                 padding=5
             ),
             widget.GroupBox(
@@ -36,23 +36,23 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                 padding_y=0,
                 padding_x=1,
                 borderwidth=3,
-                active=colors.subtext1,
-                inactive=colors.overlay1,
+                active=theme.subtext1,
+                inactive=theme.overlay1,
                 rounded=False,
-                highlight_color=colors.surface0,
+                highlight_color=theme.surface0,
                 highlight_method="line",
-                this_current_screen_border=colors.blue,
-                this_screen_border=colors.sapphire,
-                other_current_screen_border=colors.red,
-                other_screen_border=colors.surface1
+                this_current_screen_border=theme.blue,
+                this_screen_border=theme.sapphire,
+                other_current_screen_border=theme.red,
+                other_screen_border=theme.surface1
             ),
             widget.WindowName(
-                foreground=colors.subtext1,
+                foreground=theme.subtext1,
                 max_chars=60,
                 padding=5
             ),
             widget.Chord(
-                chords_colors={
+                chords_theme={
                     "launch": ("#282A36", "#282A36")
                 },
                 name_transform=lambda name: name.upper(),
@@ -63,11 +63,11 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
         if main:
             widgets.append(
                 widget.PulseVolume(
-                    foreground=colors.pink,
+                    foreground=theme.pink,
                     fmt='🕫  Vol: {}',
                     decorations=[
                         BorderDecoration(
-                            colour=colors.pink,
+                            colour=theme.pink,
                             border_width=[0, 0, 2, 0]
                         )
                     ],
@@ -80,12 +80,12 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
 
         widgets.append(
             widget.Clock(
-                foreground=colors.teal,
+                foreground=theme.teal,
                 format="⏱  %a %d-%m-%Y %I:%M %p",
                 padding=10,
                 decorations=[
                     BorderDecoration(
-                        colour=colors.teal,
+                        colour=theme.teal,
                         border_width=[0, 0, 2, 0]
                     )
                 ]
@@ -102,12 +102,12 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
         if main:
             widgets.append(
                 widget.QuickExit(
-                    foreground=colors.red,
+                    foreground=theme.red,
                     fmt='⏻: {}',
                     padding=10,
                     decorations=[
                         BorderDecoration(
-                            colour=colors.red,
+                            colour=theme.red,
                             border_width=[0, 0, 2, 0]
                         )
                     ]
@@ -119,7 +119,7 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
 
     top_bar = bar.Bar(
         widgets=create_widgets(),
-        border_color=colors.background,
+        border_color=theme.background,
         border_width=5,
         margin=[8, 8, 0, 8],
         size=26,

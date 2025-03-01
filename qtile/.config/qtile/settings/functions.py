@@ -59,11 +59,11 @@ def maximize_by_switching_layout():
     def __inner(_qtile):
         current_layout_name = _qtile.current_group.layout.name
         if current_layout_name == 'columns':
-            _qtile.current_group.use_layout(1)
+            _qtile.current_group.use_layout(0)
         elif current_layout_name == 'max':
-            _qtile.current_group.use_layout(2)
-        elif current_layout_name == 'treetab':
             _qtile.current_group.use_layout(1)
+        elif current_layout_name == 'treetab':
+            _qtile.current_group.use_layout(0)
 
     return __inner
 
@@ -72,11 +72,11 @@ def toggle_tree_tab_layout():
     def __inner(_qtile):
         current_layout_name = _qtile.current_group.layout.name
         if current_layout_name == 'columns':
-            _qtile.current_group.use_layout(3)
-        elif current_layout_name == 'max':
-            _qtile.current_group.use_layout(3)
-        elif current_layout_name == 'treetab':
             _qtile.current_group.use_layout(2)
+        elif current_layout_name == 'max':
+            _qtile.current_group.use_layout(2)
+        elif current_layout_name == 'treetab':
+            _qtile.current_group.use_layout(1)
 
     return __inner
 
@@ -91,7 +91,7 @@ def create_app_keys(_mod: str, _key, app, wm_class, description):
 
 
 def launch_terminal_app(_mod: list[str], _key, app, wm_class, description):
-    command = "kitty --title={} --class={} -e {}".format(description, wm_class, app)
+    command = "kitty --title='{}' --class={} -e {}".format(description, wm_class, app)
     base_mod = _mod if isinstance(_mod, list) else [_mod]
     return [
         Key(
@@ -105,18 +105,18 @@ def launch_terminal_app(_mod: list[str], _key, app, wm_class, description):
 
 def next_layout():
     def __inner(_qtile):
-        for _i in range(1, 4):
+        for _i in range(0, 3):
             if _qtile.current_group.current_layout == _i:
-                _qtile.current_group.use_layout(_i + 1 if _i < 3 else 1)
+                _qtile.current_group.use_layout(_i + 1 if _i < 2 else 0)
                 break
 
     return __inner
 
 
 def get_chord_popup_manager(_qtile):
-    if not hasattr(_qtile, "chord_popup_manager"):
-        _qtile.chord_popup_manager = ChordPopupManager(_qtile)
-    return _qtile.chord_popup_manager
+    if not hasattr(_qtile, "custom_chord_popup_manager"):
+        _qtile.custom_chord_popup_manager = ChordPopupManager(_qtile)
+    return _qtile.custom_chord_popup_manager
 
 
 def spawn_chord_info(chord):
