@@ -3,6 +3,7 @@ from libqtile.config import Key, Match
 from libqtile.lazy import lazy
 
 from .ChordPopupManager import ChordPopupManager
+from .PowerMenuPopup import PowerMenuPopup
 
 
 def switch_or_run(app, wm_class):
@@ -120,7 +121,7 @@ def spawn_chord_info(chord):
             if cmd.key == "Escape":
                 key_desc = "Cancel"
             chord_info["keys"].append({"key": cmd.key, "desc": key_desc})
-        manager.show_chord_info(chord_info)
+        manager.show(chord_info)
 
     return __inner
 
@@ -129,3 +130,9 @@ def spawn_chord_info(chord):
 def spawn_terminal_app(_qtile, app, wm_class, description):
     command = "kitty --title='{}' --class={} -e {}".format(description, wm_class, app)
     _qtile.spawn(command)
+
+
+@lazy.function
+def show_power_menu_popup(_qtile):
+    manager = PowerMenuPopup(_qtile)
+    manager.show()

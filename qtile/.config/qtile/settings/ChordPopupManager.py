@@ -1,4 +1,4 @@
-from qtile_extras.popup import PopupAbsoluteLayout, PopupText
+from qtile_extras.popup import PopupGridLayout, PopupText
 
 from .theme import theme
 
@@ -8,20 +8,21 @@ class ChordPopupManager:
         self.qtile = qtile
         self.popup = None
 
-    def show_chord_info(self, chord_info):
+    def show(self, chord_info):
         title_text = chord_info.get("name", "KeyChord Info")
         keys = chord_info.get("keys", [])
         popup_width = 300
         popup_height = 50 + len(keys) * 25 + 15
+        total_rows = 1 + len(keys)
 
         controls = [
             PopupText(
                 foreground=theme.foreground,
                 text=title_text,
-                pos_x=15,
-                pos_y=10,
-                width=popup_width - 30,
-                height=30,
+                row=0,
+                col=0,
+                row_span=1,
+                col_span=1,
                 h_align="center",
                 fontsize=14
             )
@@ -33,17 +34,19 @@ class ChordPopupManager:
                 PopupText(
                     foreground=theme.subtext0,
                     text=text,
-                    pos_x=15,
-                    pos_y=50 + i * 25,
-                    width=popup_width - 30,
-                    height=25,
+                    row=i + 1,
+                    col=0,
+                    row_span=1,
+                    col_span=1,
                     h_align="center",
                     fontsize=12
                 )
             )
 
-        self.popup = PopupAbsoluteLayout(
+        self.popup = PopupGridLayout(
             self.qtile,
+            rows=total_rows,
+            cols=1,
             width=popup_width,
             height=popup_height,
             controls=controls,
@@ -56,7 +59,7 @@ class ChordPopupManager:
         )
         self.popup.show(centered=True)
 
-    def kill_popup(self):
+    def kill(self):
         if self.popup is not None:
             self.popup.kill()
             self.popup = None

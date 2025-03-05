@@ -244,6 +244,12 @@ if [[ -f "/usr/bin/navi" && "$TERM" != "screen-256color" ]]; then
 fi
 # }}}
 
+# zoxide {{{
+if [[ -f "/usr/bin/zoxide" ]]; then
+  eval "$(zoxide init zsh)"
+fi
+# }}}
+
 # sudo {{{
 if [[ -x "$(command -v /usr/bin/nvim)" ]]; then
   export SUDO_EDITOR='nvim'

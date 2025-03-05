@@ -33,7 +33,7 @@ def on_enter_chord(chord_name):
 
 @hook.subscribe.leave_chord
 def on_leave_chord():
-    get_chord_popup_manager(qtile).kill_popup()
+    get_chord_popup_manager(qtile).kill()
 
 
 @hook.subscribe.startup_once

@@ -6,7 +6,7 @@ from qtile_extras import widget
 from qtile_extras.widget.decorations import BorderDecoration
 from qtile_extras.widget.network import WiFiIcon
 
-from .functions import spawn_terminal_app
+from .functions import spawn_terminal_app, show_power_menu_popup
 from .theme import theme
 
 laptop = os.path.exists('/sys/class/power_supply/BAT1/status')
@@ -124,6 +124,11 @@ def create_screen(x=0, y=0, width=1920, height=1080, main=False, wallpaper_mode=
                     foreground=theme.red,
                     fmt='⏻: {}',
                     padding=10,
+                    default_text='logout',
+                    countdown_format='{} seconds',
+                    mouse_callbacks={
+                        'Button3': show_power_menu_popup()
+                    },
                     decorations=[
                         BorderDecoration(
                             colour=theme.red,
